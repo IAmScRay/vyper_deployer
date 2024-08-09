@@ -18,4 +18,7 @@ Features:
 4. Write your own smart contract code ☺️
 5. Start deployer & follow the instructions: `python3 main.py`
 
-For now, deployments were successful on several testnets, including **Ethereum Holesky**, **Vana Satori** & **Citrea Devnet** but you are able to try other networks, too!
+For now, deployments were successful on several testnets, including **Ethereum Holesky**, **Vana Satori** & **Citrea Devnet** but you are welcome to try other networks, too! ⭐️
+
+Below is an example of deploying ERC20 token with Vyper codebase to Citrea Devnet:
+![](https://github.com/IAmScRay/vyper_deployer/blob/main/example.gif)
