@@ -147,6 +147,8 @@ def convert(
         
         return "string", value if len(value) <= size else ()
 
+    return ()
+
 
 def deploy(
     filename: str,
@@ -215,7 +217,7 @@ def deploy(
     )
     print(f"💰 Balance: {formatted_balance} {chain_data['ticker']}\n")
     
-    deployment_fee = 3000000 * (provider.eth.gas_price // 100 * 150)
+    deployment_fee = 3000000 * (provider.eth.gas_price // 100 * 125)
     formatted_fee = round(
         provider.from_wei(deployment_fee, "ether"),
         ndigits=8
@@ -259,27 +261,38 @@ def deploy(
             print("🕸 Unfortunately, we couldn't find an explorer URL for you to see your contract – make sure to find one if you want to verify your contract!\n")
         
         json_filename = filename.split(".")[0]
-        print(f"📝 Saving ABI file to `{json_filename}.json`...")
+
+        print(f"📝 Saving deployment data to `{json_filename}.json`...")
 
         try:
-            os.mkdir(os.getcwd() + os.sep + "abi_files")
+            os.mkdir(os.getcwd() + os.sep + "deployment_data")
         except FileExistsError:
             pass
 
-        if os.path.exists(os.getcwd() + os.sep + "abi_files" + os.sep + f"{json_filename}.json"):
+        if os.path.exists(os.getcwd() + os.sep + "deployment_data" + os.sep + f"{json_filename}.json"):
             print(f"🔍It seems like there is already a file named `{json_filename}.json`!")
         
             cur_time = int(time.time())
-            print(f"ABI will be saved to a new file named `{json_filename}-{cur_time}.json`")
+            print(f"Data will be saved to a new file named `{json_filename}-{cur_time}.json`")
             
             input("💪 Press ENTER to continue.\n")
             
             json_filename = json_filename + f"-{cur_time}"
             
-        with open(os.getcwd() + os.sep + "abi_files" + os.sep + f"{json_filename}.json", "x") as abi_file:
-            json.dump(json.loads(abi), abi_file, sort_keys=False, indent=2)
+        with open(os.getcwd() + os.sep + "deployment_data" + os.sep + f"{json_filename}.json", "x") as result_file:
+            json.dump(
+                {
+                    "address": str(receipt.contractAddress),
+                    "constructor_args": constructor_args,
+                    "vyper_version": vyper_version,
+                    "abi": json.loads(abi)
+                },
+                result_file,
+                sort_keys=False,
+                indent=2
+            )
         
-        print(f"👌 Saved ABI to abi_files/{json_filename}.json.")
+        print(f"👌 Saved deployment JSON to `deployment_data/{json_filename}.json`")
         print(f"Make sure to select Vyper v{vyper_version} when verifying contract's code & "
               f"use generated ABI file when interacting with contract's functions.\n")
     else:
@@ -290,7 +303,9 @@ def deploy(
 def main():
     print("-" * 48)
     print("Vyper contract deployer")
-    print("Author: @i_am_scray (https://github.com/IAmScRay")
+    print("Author: IAmScRay")
+    print("Website: https://iamscray.dev")
+    print("GitHub: https://github.com/IAmScRay")
     print("-" * 48, "\n")
 
     vy_filename = ""
